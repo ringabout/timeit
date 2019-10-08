@@ -1,2 +1,2 @@
 # timeit
-measuring execution times
+measuring execution times written in nim.
