@@ -1,12 +1,15 @@
 import times, os
+import std/monotimes
 
-template timeIt(myFunc: untyped): float = 
-  let time = cpuTime()
+
+template timeGo(myFunc: untyped): Duration = 
+  let time = getMonoTime()
   myFunc()
-  cpuTime() - time
+  getMonoTime() - time
+
 
 proc mySleep() = 
   sleep(100)
 
-echo timeIt(mySleep)
-  
+
+echo timeGo(mySleep).inNanoseconds 
