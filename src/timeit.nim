@@ -1,4 +1,4 @@
-import times, stats
+import times, stats, math
 import strformat
 import std/monotimes
 
@@ -7,6 +7,7 @@ const repeatTimes = 7
 type
   Time = int
   Timer = ref object
+    name: string
     mean: float
     std: float
     times: int
@@ -43,7 +44,7 @@ proc `$`(moment: Moment): string =
 proc `$`(timer: Timer): string = 
   let momentMean = toTime(timer.mean)
   let momentStd = toTime(timer.std)
-  fmt"{momentMean} ± {momentStd} per loop (mean ± std. dev. of {timer.times} runs)"
+  fmt"{momentMean} ± {momentStd} per loop (mean ± std. dev. of {timer.times} runs, {timer.loops} loops each)"
 
 
 proc toTime(time: float): Moment = 
@@ -59,23 +60,36 @@ proc toTime(time: float): Moment =
 
 
 # 8.26 ns ± 0.12 ns per loop (mean ± std. dev. of 7 runs, 100000000 loops each)
+template inner(myFunc: untyped): Time = 
+  let time = getMonoTime()
+  myFunc
+  let lasting = getMonoTime() - time
+  lasting.inNanoseconds.Time
+
+
 
 template timeIt(myFunc: untyped, repeatTimes: int = repeatTimes): Timer = 
   var 
     timer = new Timer
     timerTotal: seq[Time]
+    totalMean: seq[float]
+    totalStd: seq[float]
     timerTimes: int = repeatTimes
-    timerLoops: int = 1000
+    timerLoops: Time
   assert repeatTimes >= 1, "repeatTimes must be greater than 1"
+  timerLoops = 1000_000_000 div myFunc.inner
+  timerLoops = 10 ^ int(log10(timerLoops.float))
+  if timerLoops == 0:
+    timerLoops = 1
   GC_disable()
   for _ in 1 .. repeatTimes:
-    let time = getMonoTime()
-    myFunc
-    let lasting = getMonoTime() - time
-    timerTotal.add Time(lasting.inNanoseconds)
+    for _ in 1 .. timerLoops:
+      timerTotal.add myFunc.inner
+    totalMean.add timerTotal.mean
+    totalStd.add timerTotal.standardDeviation
   GC_enable()
-  timer.mean = timerTotal.mean
-  timer.std = timerTotal.standardDeviation
+  timer.mean = totalMean.mean
+  timer.std = totalStd.standardDeviation
   timer.times = timerTimes
   timer.loops = timerLoops
   timer
@@ -85,7 +99,5 @@ template timeIt(myFunc: untyped, repeatTimes: int = repeatTimes): Timer =
 when isMainModule:
   import os
   proc mySleep(age: varargs[int]): int {.discardable.} = 
-    for i in 1 .. 10:
-      os.sleep(100)
-  
-  echo timeIt(mySleep(1, 2, 3), 10)
+    sleep(3)
+  echo timeIt(mySleep(1, 2, 3), 7)
