@@ -9,8 +9,16 @@ import unittest, os
 
 import timeit
 
-proc mySleep(age: varargs[int]): int {.discardable.} = 
+proc sleepNoReturn(age: varargs[int]) = 
   sleep(3)
-test "can add":
-  echo timeIt(mySleep(1, 2, 3), 7)
-  
+
+proc sleepDiscardValue(age: varargs[int]): int {.discardable.} = 
+  sleep(3)
+
+
+
+test "proc without return value":
+  echo timeIt(sleepNoReturn(5, 2, 1), 7)
+
+test "proc with discardable value":
+  echo timeIt(sleepDiscardValue(5, 2, 1), 7)

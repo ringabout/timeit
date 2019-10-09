@@ -2,31 +2,35 @@ import times, stats, math
 import strformat
 import std/monotimes
 
+
+export times 
+
+
 const repeatTimes = 7
 
 type
-  Time = int
-  Timer = ref object
+  TimeInt* = int
+  Timer* = ref object
     name: string
     mean: float
     std: float
     times: int
     loops: int
   Moment = ref object
-    minutes: Time
-    seconds: Time
-    milliSeconds: Time
-    microSeconds: Time
+    minutes: TimeInt
+    seconds: TimeInt
+    milliSeconds: TimeInt
+    microSeconds: TimeInt
     nanoSeconds: float
 
 
-proc `$`(moment: Moment): string
-proc `$`(timer: Timer): string
+proc `$`*(moment: Moment): string
+proc `$`*(timer: Timer): string
 proc toTime(time: float): Moment
 
 
 
-proc `$`(moment: Moment): string = 
+proc `$`*(moment: Moment): string = 
   result &= "["
   if moment.minutes != 0:
     result &= fmt"{moment.minutes}m "
@@ -41,7 +45,7 @@ proc `$`(moment: Moment): string =
 
   
 
-proc `$`(timer: Timer): string = 
+proc `$`*(timer: Timer): string = 
   let momentMean = toTime(timer.mean)
   let momentStd = toTime(timer.std)
   fmt"{momentMean} ± {momentStd} per loop (mean ± std. dev. of {timer.times} runs, {timer.loops} loops each)"
@@ -49,7 +53,7 @@ proc `$`(timer: Timer): string =
 
 proc toTime(time: float): Moment = 
   var moment = new Moment
-  let nanoTime = Time(time)
+  let nanoTime = TimeInt(time)
   moment.nanoSeconds = float(nanoTime mod 1_000 - nanoTime) + time 
   moment.microSeconds = (nanoTime div 1_000) mod 1_000
   moment.milliSeconds = (nanoTime div 1_000_000) mod 1_000
@@ -60,31 +64,31 @@ proc toTime(time: float): Moment =
 
 
 # 8.26 ns ± 0.12 ns per loop (mean ± std. dev. of 7 runs, 100000000 loops each)
-template inner(myFunc: untyped): Time = 
+template inner*(myFunc: untyped): TimeInt = 
   let time = getMonoTime()
   myFunc
   let lasting = getMonoTime() - time
-  lasting.inNanoseconds.Time
+  lasting.inNanoseconds.TimeInt
 
 
 
 template timeIt*(myFunc: untyped, repeatTimes: int = repeatTimes): Timer = 
   var 
     timer = new Timer
-    timerTotal: seq[Time]
+    timerTotal: seq[TimeInt]
     totalMean: seq[float]
     totalStd: seq[float]
     timerTimes: int = repeatTimes
-    timerLoops: Time
+    timerLoops: TimeInt
   assert repeatTimes >= 1, "repeatTimes must be greater than 1"
-  timerLoops = 1000_000_000 div myFunc.inner
+  timerLoops = 1000_000_000 div inner(myFunc)
   timerLoops = 10 ^ int(log10(timerLoops.float))
   if timerLoops == 0:
     timerLoops = 1
   GC_disable()
   for _ in 1 .. repeatTimes:
     for _ in 1 .. timerLoops:
-      timerTotal.add myFunc.inner
+      timerTotal.add inner(myFunc)
     totalMean.add timerTotal.mean
     totalStd.add timerTotal.standardDeviation
   GC_enable()
@@ -98,6 +102,6 @@ template timeIt*(myFunc: untyped, repeatTimes: int = repeatTimes): Timer =
 
 when isMainModule:
   import os
-  proc mySleep(age: varargs[int]): int {.discardable.} = 
+  proc mySleep(age: varargs[int]) = 
     sleep(3)
   echo timeIt(mySleep(1, 2, 3), 7)
