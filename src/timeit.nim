@@ -43,7 +43,7 @@ proc `$`(moment: Moment): string =
 proc `$`(timer: Timer): string = 
   let momentMean = toTime(timer.mean)
   let momentStd = toTime(timer.std)
-  fmt"{momentMean} ± {momentStd} ns per loop (mean ± std. dev. of {timer.times} runs)"
+  fmt"{momentMean} ± {momentStd} per loop (mean ± std. dev. of {timer.times} runs)"
 
 
 proc toTime(time: float): Moment = 
@@ -83,8 +83,9 @@ template timeIt(myFunc: untyped, repeatTimes: int = repeatTimes): Timer =
 
 
 when isMainModule:
+  import os
   proc mySleep(age: varargs[int]): int {.discardable.} = 
     for i in 1 .. 10:
-      discard i
+      os.sleep(100)
   
   echo timeIt(mySleep(1, 2, 3), 10)
