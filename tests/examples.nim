@@ -9,10 +9,10 @@ import unittest, os
 
 import timeit
 
-proc sleepNoReturn(age: varargs[int]) = 
+proc sleepNoReturn(num: varargs[int]) = 
   sleep(3)
 
-proc sleepDiscardValue(age: varargs[int]): int {.discardable.} = 
+proc sleepDiscardValue(num: varargs[int]): int {.discardable.} = 
   sleep(3)
 
 

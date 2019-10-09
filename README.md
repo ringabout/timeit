@@ -5,7 +5,7 @@ for proc without return value
 ```nim
 import timeit
 
-proc mySleep(age: varargs[int]) = 
+proc mySleep(num: varargs[int]) = 
   for i in 1 .. 10:
     discard
 echo timeGo(mySleep(5, 2, 1))
@@ -15,7 +15,7 @@ for proc with return value
 ```nim
 import timeit
 
-proc mySleep(age: varargs[int]): int {.discardable.} = 
+proc mySleep(num: varargs[int]): int {.discardable.} = 
   for i in 1 .. 10:
     discard
 echo timeGo(mySleep(5, 2, 1)) 
