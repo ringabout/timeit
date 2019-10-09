@@ -5,8 +5,12 @@
 #
 # To run these tests, simply execute `nimble test`.
 
-import unittest
+import unittest, os
 
 import timeit
+
+proc mySleep(age: varargs[int]): int {.discardable.} = 
+  sleep(3)
 test "can add":
-  check add(5, 5) == 10
+  echo timeIt(mySleep(1, 2, 3), 7)
+  

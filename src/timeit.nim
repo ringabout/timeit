@@ -68,7 +68,7 @@ template inner(myFunc: untyped): Time =
 
 
 
-template timeIt(myFunc: untyped, repeatTimes: int = repeatTimes): Timer = 
+template timeIt*(myFunc: untyped, repeatTimes: int = repeatTimes): Timer = 
   var 
     timer = new Timer
     timerTotal: seq[Time]
