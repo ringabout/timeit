@@ -1,4 +1,4 @@
-import times, os, stats
+import times, stats
 import strformat
 import std/monotimes
 
@@ -60,7 +60,7 @@ proc toTime(time: float): Moment =
 
 # 8.26 ns ± 0.12 ns per loop (mean ± std. dev. of 7 runs, 100000000 loops each)
 
-template timeGo(myFunc: untyped, repeatTimes: int = repeatTimes): Timer = 
+template timeIt(myFunc: untyped, repeatTimes: int = repeatTimes): Timer = 
   var 
     timer = new Timer
     timerTotal: seq[Time]
@@ -82,10 +82,9 @@ template timeGo(myFunc: untyped, repeatTimes: int = repeatTimes): Timer =
   
 
 
-proc mySleep(age: varargs[int]): int {.discardable.} = 
-  for i in 1 .. 10:
-    echo i
- 
-
-
-echo timeGo(mySleep(1, 2, 3), 10)
+when isMainModule:
+  proc mySleep(age: varargs[int]): int {.discardable.} = 
+    for i in 1 .. 10:
+      discard i
+  
+  echo timeIt(mySleep(1, 2, 3), 10)
