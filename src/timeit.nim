@@ -6,7 +6,9 @@ import std/monotimes
 export times 
 
 
-const repeatTimes = 7
+const 
+  repeatTimes = 7
+  loopTimes = 0
 
 type
   TimeInt* = int
@@ -72,19 +74,22 @@ template inner*(myFunc: untyped): TimeInt =
 
 
 
-template timeGo*(myFunc: untyped, repeatTimes: int = repeatTimes): Timer = 
+template timeGo*(myFunc: untyped, 
+                repeatTimes: int = repeatTimes, 
+                loopTimes: int = loopTimes): Timer = 
   var 
     timer = new Timer
     timerTotal: seq[TimeInt]
     totalMean: seq[float]
     totalStd: seq[float]
     timerTimes: int = repeatTimes
-    timerLoops: TimeInt
+    timerLoops: TimeInt = loopTimes
   assert repeatTimes >= 1, "repeatTimes must be greater than 1"
-  timerLoops = 1000_000_000 div inner(myFunc)
-  timerLoops = 10 ^ int(log10(timerLoops.float))
   if timerLoops == 0:
-    timerLoops = 1
+    timerLoops = 1000_000_000 div inner(myFunc)
+    timerLoops = 10 ^ int(log10(timerLoops.float))
+    if timerLoops == 0:
+      timerLoops = 1
   GC_disable()
   for _ in 1 .. repeatTimes:
     for _ in 1 .. timerLoops:
@@ -104,4 +109,4 @@ when isMainModule:
   import os
   proc mySleep(age: varargs[int]) = 
     sleep(3)
-  echo timeGo(mySleep(1, 2, 3), 7)
+  echo timeGo(mySleep(1, 2, 3), 7, 20)
