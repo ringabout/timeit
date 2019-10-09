@@ -1,6 +1,7 @@
 import times, stats, math
 import strformat
 import std/monotimes
+import macros
 
 
 export times 
@@ -30,6 +31,9 @@ proc `$`*(moment: Moment): string
 proc `$`*(timer: Timer): string
 proc toTime(time: float): Moment
 
+macro eval(s: string): untyped = 
+  result = newStmtList()
+  result.add parseExpr($s)
 
 
 proc `$`*(moment: Moment): string = 
