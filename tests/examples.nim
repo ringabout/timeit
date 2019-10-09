@@ -18,7 +18,7 @@ proc sleepDiscardValue(age: varargs[int]): int {.discardable.} =
 
 
 test "proc without return value":
-  echo timeIt(sleepNoReturn(5, 2, 1), 7)
+  echo timeGo(sleepNoReturn(5, 2, 1), 7)
 
 test "proc with discardable value":
-  echo timeIt(sleepDiscardValue(5, 2, 1), 7)
+  echo timeGo(sleepDiscardValue(5, 2, 1), 7)

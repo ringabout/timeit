@@ -72,7 +72,7 @@ template inner*(myFunc: untyped): TimeInt =
 
 
 
-template timeIt*(myFunc: untyped, repeatTimes: int = repeatTimes): Timer = 
+template timeGo*(myFunc: untyped, repeatTimes: int = repeatTimes): Timer = 
   var 
     timer = new Timer
     timerTotal: seq[TimeInt]
@@ -104,4 +104,4 @@ when isMainModule:
   import os
   proc mySleep(age: varargs[int]) = 
     sleep(3)
-  echo timeIt(mySleep(1, 2, 3), 7)
+  echo timeGo(mySleep(1, 2, 3), 7)
