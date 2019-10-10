@@ -1,8 +1,8 @@
-import timeit/main
+import timeitpkg/main
 
 export main
 
 
 when isMainModule:
-  import timeit/cli
+  import timeitpkg/cli
   command()
