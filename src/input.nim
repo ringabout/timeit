@@ -1,5 +1,5 @@
 import os
-proc hello() = 
+proc hello*() = 
   sleep(3)
 
 
