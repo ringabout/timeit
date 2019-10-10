@@ -1,6 +1,6 @@
-import streams, strformat
+import streams, strformat, strutils
 import parseopt
-import osproc
+import os, osproc
 
 
 
@@ -20,10 +20,11 @@ proc command*() =
         def = p.val
     of cmdArgument:
       echo "Argument: ", p.key
+  if name.endsWith(".nim"):
+    name = name[ .. ^5]
   var strm = newFileStream(name & ".nim", fmRead)
   var line = ""
-  let tempFile = "temp.nim"
-
+  let tempFile = getTempDir() & "timeit_temp.nim"
   var temp = newFileStream(tempFile, fmWrite)
   if not isNil(temp):
     temp.writeLine(fmt"import timeit")
@@ -36,8 +37,9 @@ proc command*() =
       temp.close()
     strm.close()
 
-  let (output, _) = execCmdEx("nim c -r --verbosity=0 --hints=off --hint[source]=off " & tempFile)
+  let (output, _) = execCmdEx("nim c -r -f --verbosity=0 --hints=off --hint[source]=off " & tempFile)
 
-  temp = newFileStream(tempFile, fmWrite)
   temp.close()
+
+
   echo output
