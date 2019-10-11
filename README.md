@@ -1,6 +1,8 @@
 # timeit
 measuring execution times written in nim.
 ## Usage
+
+### import timeit
 In **timeit** module, you can use the **timeGo** to
 measure execution times of proc. \
 There are three parameters in **timeGo**.\
@@ -18,6 +20,16 @@ If you want to pass the proc with return value,
 you should add the pragma **{.discardable.}** to the
 definitions of your proc.Then you can use **timeGo**
 to measure the execution times of your proc, namely **myProc(args)**.
+### use command-line interface
+Firstly, you need to make sure that your **.nimble** directory must be in your path environment.
+Then you can use **timeit --name=yourNimFile --def=yourProc**. \
+
+```nim
+# in bash
+timeit --name=test --def=hello()
+# [46ms 290μs 893.17ns] ± [1ms 164μs 333.97ns] per loop (mean ± std. dev. of 7 runs, 10 loops each)
+```
+
 
 
 ## Examples

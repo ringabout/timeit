@@ -33,6 +33,7 @@ proc command*() =
       if not isNil(temp):
         temp.writeLine(line)
     if not isNil(temp):
+      temp.writeLine("echo \"*********************\"")
       temp.writeLine(fmt"echo timeGo({def})")
       temp.close()
     strm.close()
