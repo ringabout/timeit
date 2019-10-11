@@ -67,6 +67,8 @@ proc toTime(time: float): Moment =
 
 
 # 8.26 ns ± 0.12 ns per loop (mean ± std. dev. of 7 runs, 100000000 loops each)
+#  TODO  
+# Modify to get the info of proc
 template inner*(myFunc: untyped): TimeInt = 
   let time = getMonoTime()
   myFunc
