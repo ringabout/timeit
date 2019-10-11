@@ -76,7 +76,6 @@ template inner*(myFunc: untyped): TimeInt =
   lasting.inNanoseconds.TimeInt
 
 
-
 template timeGo*(myFunc: untyped, 
                 repeatTimes: int = repeatTimes, 
                 loopTimes: int = loopTimes): Timer = 
@@ -91,25 +90,32 @@ template timeGo*(myFunc: untyped,
   if timerLoops == 0:
     var oneTime = inner(myFunc)
     let singleTime = oneTime.float
-    timerLoops = 1_000_000_000 div oneTime
-    if timerLoops == 0:
-      # if cost time > 5s,  stop timeGo.
-      oneTime = oneTime div 50_000
-      oneTime = oneTime div 100_000
-      if oneTime != 0:
-          timerTimes = 0
-          totalMean.add(singleTime)
-          totalStd.add(0.0)
-      timerLoops = 1
+    if oneTime != 0:
+      timerLoops = 1_000_000_000 div oneTime
+      if timerLoops == 0:
+        # if cost time > 5s,  stop timeGo.
+        oneTime = oneTime div 50_000
+        oneTime = oneTime div 100_000
+        if oneTime != 0:
+            timerTimes = 0
+            totalMean.add(singleTime)
+            totalStd.add(0.0)
+        timerLoops = 1
+      else:
+        timerLoops = 10 ^ int(log10(timerLoops.float))
     else:
-      timerLoops = 10 ^ int(log10(timerLoops.float))
-  GC_disable()
-  for _ in 1 .. timerTimes:
-    for _ in 1 .. timerLoops:
-      timerTotal.add inner(myFunc)
-    totalMean.add timerTotal.mean
-    totalStd.add timerTotal.standardDeviation
-  GC_enable()
+      totalMean.add(0.5)
+      totalStd.add(0)
+      timerTimes = 0
+      timerLoops = 1
+    GC_disable()
+    for _ in 1 .. timerTimes:
+      for _ in 1 .. timerLoops:
+        timerTotal.add inner(myFunc)
+      totalMean.add timerTotal.mean
+      totalStd.add timerTotal.standardDeviation
+    GC_enable()
+
   timer.mean = totalMean.mean
   timer.std = totalStd.standardDeviation
   if timerTimes == 0:
