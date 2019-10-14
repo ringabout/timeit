@@ -28,7 +28,9 @@ definitions of your proc.Then you can use **timeGo**
 to measure the execution times of your proc, namely **myProc(args)**.
 ### use command-line interface
 Firstly, you need to make sure that your **.nimble** directory must be in your path environment.
-Then you can use **timeit --name=yourNimFile --def=yourProc**. 
+Then you can use **timeit --name=yourNimFile --def=yourProc**. \
+However, string parameters can't appear in yourProc.And If you want
+to specify more than one parameter, you should use **"yourProc(parameters)"**.
 
 ```nim
 # in bash
