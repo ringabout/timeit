@@ -87,34 +87,37 @@ template timeGo*(myFunc: untyped,
     timerTimes: int = repeatTimes
     timerLoops: TimeInt = loopTimes
   assert timerTimes >= 1, "repeatTimes must be greater than 1"
-  if timerLoops == 0:
-    var oneTime = inner(myFunc)
-    let singleTime = oneTime.float
-    if oneTime != 0:
-      timerLoops = 1_000_000_000 div oneTime
-      if timerLoops == 0:
-        # if cost time > 5s,  stop timeGo.
-        oneTime = oneTime div 50_000
-        oneTime = oneTime div 100_000
-        if oneTime != 0:
-            timerTimes = 0
-            totalMean.add(singleTime)
-            totalStd.add(0.0)
-        timerLoops = 1
-      else:
-        timerLoops = 10 ^ int(log10(timerLoops.float))
-    else:
-      totalMean.add(0.5)
-      totalStd.add(0)
-      timerTimes = 0
+  var oneTime = inner(myFunc)
+  let singleTime = oneTime.float
+  if oneTime != 0:
+    timerLoops = 1_000_000_000 div oneTime
+    if timerLoops == 0:
+      # if cost time > 5s,  stop timeGo.
+      oneTime = oneTime div 50_000
+      oneTime = oneTime div 100_000
+      if oneTime != 0:
+          timerTimes = 0
+          totalMean.add(singleTime)
+          totalStd.add(0.0)
       timerLoops = 1
-    GC_disable()
-    for _ in 1 .. timerTimes:
-      for _ in 1 .. timerLoops:
-        timerTotal.add inner(myFunc)
-      totalMean.add timerTotal.mean
-      totalStd.add timerTotal.standardDeviation
-    GC_enable()
+    else:
+      timerLoops = 10 ^ int(log10(timerLoops.float))
+  else:
+    totalMean.add(0.5)
+    totalStd.add(0)
+    timerTimes = 0
+    timerLoops = 1
+  if loopTimes != 0:
+    timerLoops = loopTimes
+  for _ in 1 .. timerTimes:
+    for _ in 1 .. timerLoops:
+      timerTotal.add inner(myFunc)
+    totalMean.add timerTotal.mean
+    totalStd.add timerTotal.standardDeviation
+    GC_full_collect()
+
+
+
 
   timer.mean = totalMean.mean
   timer.std = totalStd.standardDeviation

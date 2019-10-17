@@ -9,6 +9,7 @@ proc command*() =
     p = initOptParser()
     name: string
     def: string
+    args: seq[string]
   while true:
     p.next()
     case p.kind
@@ -19,7 +20,9 @@ proc command*() =
       elif p.key == "def":
         def = p.val
     of cmdArgument:
-      echo "Argument: ", p.key
+      args.add p.key
+  
+
   if name.endsWith(".nim"):
     name = name[ .. ^5]
   var strm = newFileStream(name & ".nim", fmRead)
