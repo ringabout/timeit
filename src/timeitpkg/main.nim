@@ -25,12 +25,17 @@ type
     milliSeconds: TimeInt
     microSeconds: TimeInt
     nanoSeconds: float
+  Monit* = ref object
+    name*: string
+    begin*: MonoTime
+    stop*: MonoTime
+
 
 
 proc `$`*(moment: Moment): string
 proc `$`*(timer: Timer): string
 proc toTime(time: float): Moment
-
+proc monit*(name="monit"): Monit
 
 
 proc `$`*(moment: Moment): string = 
@@ -64,6 +69,27 @@ proc toTime(time: float): Moment =
   moment.minutes = (nanoTime div 1_000_000_000 div 60) mod 1_000
   moment
 
+proc toTime(time: int64): Moment = 
+  var moment = new Moment
+  let nanoTime = TimeInt(time)
+  moment.nanoSeconds = float(nanoTime mod 1_000)
+  moment.microSeconds = (nanoTime div 1_000) mod 1_000
+  moment.milliSeconds = (nanoTime div 1_000_000) mod 1_000
+  moment.seconds = (nanoTime div 1_000_000_000) mod 1_000
+  moment.minutes = (nanoTime div 1_000_000_000 div 60) mod 1_000
+  moment
+
+
+proc monit*(name="monit"): Monit = 
+  Monit(name: name)
+
+proc start*(self: Monit) = 
+  self.begin = getMonoTime()
+
+proc finish*(self: Monit) = 
+  self.stop = getMonoTime()
+  let lasting = self.stop - self.begin
+  echo self.name & " -> " & $lasting.inNanoseconds.toTime
 
 
 # 8.26 ns ± 0.12 ns per loop (mean ± std. dev. of 7 runs, 100000000 loops each)
@@ -117,8 +143,6 @@ template timeGo*(myFunc: untyped,
     GC_full_collect()
 
 
-
-
   timer.mean = totalMean.mean
   timer.std = totalStd.standardDeviation
   if timerTimes == 0:
@@ -126,3 +150,11 @@ template timeGo*(myFunc: untyped,
   timer.times = timerTimes
   timer.loops = timerLoops
   timer
+
+
+when isMainModule:
+  var m = monit("first")
+  m.start()
+  let a = 12
+  echo a + 3 
+  m.finish()

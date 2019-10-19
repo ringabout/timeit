@@ -7,7 +7,6 @@ nimble install timeit
 ```
 
 ## Usage
-
 ### import timeit
 In **timeit** module, you can use the **timeGo** to
 measure execution times of proc. \
@@ -26,6 +25,25 @@ If you want to pass the proc with return value,
 you should add the pragma **{.discardable.}** to the
 definitions of your proc.Then you can use **timeGo**
 to measure the execution times of your proc, namely **myProc(args)**.
+
+### use monit function
+You can use monit function to measure the times
+of code executions. \
+First you can specify the **name** of this test,
+for example, "first".Then you can place the
+**start** function in the begin of the code you want
+to measure, and place the **finsih** function in the
+end of the code you want to measure.
+```nim
+import timeit
+var m = monit("first")
+m.start()
+let a = 12
+echo a + 3 
+m.finish()
+# first -> [17μs 0.00ns]
+```
+
 ### use command-line interface
 Firstly, you need to make sure that your **.nimble** directory must be in your path environment.
 Then you can use **timeit --name=yourNimFile --def=yourProc**. \
