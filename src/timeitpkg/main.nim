@@ -92,12 +92,13 @@ proc finish*(self: Monit) =
   echo self.name & " -> " & $lasting.inNanoseconds.toTime
 
 
+
 # 8.26 ns ± 0.12 ns per loop (mean ± std. dev. of 7 runs, 100000000 loops each)
 #  TODO  
 # Modify to get the info of proc
 template inner*(myFunc: untyped): TimeInt = 
   let time = getMonoTime()
-  myFunc
+  myFunc 
   let lasting = getMonoTime() - time
   lasting.inNanoseconds.TimeInt
 
@@ -118,7 +119,7 @@ template timeGo*(myFunc: untyped,
   if oneTime != 0:
     timerLoops = 1_000_000_000 div oneTime
     if timerLoops == 0:
-      # if cost time > 5s,  stop timeGo.
+      # if cost time > 5s, stop timeGo.
       oneTime = oneTime div 50_000
       oneTime = oneTime div 100_000
       if oneTime != 0:
@@ -152,9 +153,28 @@ template timeGo*(myFunc: untyped,
   timer
 
 
-when isMainModule:
-  var m = monit("first")
+template timeOnce*(code: untyped) =
+  var m = monit("test-once")
   m.start()
-  let a = 12
-  echo a + 3 
+  code
   m.finish()
+
+when isMainModule:
+  timeOnce:
+    var a = 12
+    for i in 1 .. 10000:
+      a += i
+    echo a
+  
+  echo timeGo do:
+    var b = 12
+    b += 12
+
+  proc foo() = 
+    var a = 12
+    for i in 1 .. 10000:
+      a += i
+    echo a
+
+
+  echo timeGo(foo())

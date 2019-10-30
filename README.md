@@ -26,6 +26,19 @@ you should add the pragma **{.discardable.}** to the
 definitions of your proc.Then you can use **timeGo**
 to measure the execution times of your proc, namely **myProc(args)**.
 
+### another Way
+You can also use timeGo as follow:
+```nim
+import os
+
+echo timeGo do:
+  os.sleep(12)
+  var a = 12
+  for i in 1 .. 1000:
+  a += 12
+# output [12ms 883μs 34.58ns] ± [19μs 974.83ns] per loop (mean ± std. dev. of 7 runs, 10 loops each)
+```
+
 ### use monit function
 You can use monit function to measure the times
 of code executions. \
@@ -43,6 +56,15 @@ echo a + 3
 m.finish()
 # first -> [17μs 0.00ns]
 ```
+You can also monit once as follows:
+```nim
+timeOnce:
+  var a = 12
+  for i in 1 .. 10000:
+    a += i
+  echo a
+```
+
 
 ### use command-line interface
 Firstly, you need to make sure that your **.nimble** directory must be in your path environment.
