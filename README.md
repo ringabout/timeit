@@ -81,12 +81,13 @@ You can also measure the execution time of the whole Nim file.
 ```nim
 # in bash
 timeit test.nim
-# test-whole -> [216μs 400.00ns]
+# debug mode
+# test-whole -> [208μs 100.00ns]
 
 # or specify the -d flag
 timeit test.nim -d:release
-# test-whole -> [26μs 0.00ns]
-
+# release mode
+# test-whole -> [29μs 200.00ns]
 ```
 
 
