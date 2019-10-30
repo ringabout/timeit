@@ -5,6 +5,8 @@ measuring execution times written in nim.
 ```text
 nimble install timeit
 ```
+## Documention
+https://xflywind.github.io/timeit/src/main.html
 
 ## Usage
 ### import timeit
