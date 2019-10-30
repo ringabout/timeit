@@ -14,17 +14,17 @@ const
 type
   TimeInt* = int
   Timer* = ref object
-    name: string
-    mean: float
-    std: float
-    times: int
-    loops: int
-  Moment = ref object
-    minutes: TimeInt
-    seconds: TimeInt
-    milliSeconds: TimeInt
-    microSeconds: TimeInt
-    nanoSeconds: float
+    name*: string
+    mean*: float
+    std*: float
+    times*: int
+    loops*: int
+  Moment* = ref object
+    minutes*: TimeInt
+    seconds*: TimeInt
+    milliSeconds*: TimeInt
+    microSeconds*: TimeInt
+    nanoSeconds*: float
   Monit* = ref object
     name*: string
     begin*: MonoTime

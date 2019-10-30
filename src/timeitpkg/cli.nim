@@ -55,7 +55,7 @@ proc command*() =
         temp.writeLine(line)
     if not isNil(temp):
       temp.writeLine("echo \"****************************\"")
-      temp.writeLine(fmt"""echo "{option} mode"""")
+      temp.writeLine(fmt"""echo "{option} mode" """)
       if def == "":
         temp.writeLine("m.finish()")
       else:
