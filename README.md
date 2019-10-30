@@ -77,6 +77,17 @@ to specify more than one parameter, you should use **"yourProc(parameters)"**.
 timeit --name=test --def=hello()
 # [46ms 290μs 893.17ns] ± [1ms 164μs 333.97ns] per loop (mean ± std. dev. of 7 runs, 10 loops each)
 ```
+You can also measure the execution time of the whole Nim file.
+```nim
+# in bash
+timeit test.nim
+# test-whole -> [216μs 400.00ns]
+
+# or specify the -d flag
+timeit test.nim -d:release
+# test-whole -> [26μs 0.00ns]
+
+```
 
 
 
