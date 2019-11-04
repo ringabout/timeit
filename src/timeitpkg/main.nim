@@ -4,10 +4,10 @@ import std/monotimes
 import macros
 
 
-export times 
+export times
 
 
-const 
+const
   repeatTimes = 7
   loopTimes = 0
 
@@ -35,10 +35,10 @@ type
 proc `$`*(moment: Moment): string
 proc `$`*(timer: Timer): string
 proc toTime(time: float): Moment
-proc monit*(name="monit"): Monit
+proc monit*(name = "monit"): Monit
 
 
-proc `$`*(moment: Moment): string = 
+proc `$`*(moment: Moment): string =
   result &= "["
   if moment.minutes != 0:
     result &= fmt"{moment.minutes}m "
@@ -51,25 +51,25 @@ proc `$`*(moment: Moment): string =
   result &= fmt"{moment.nanoSeconds:.2f}ns"
   result &= "]"
 
-  
 
-proc `$`*(timer: Timer): string = 
+
+proc `$`*(timer: Timer): string =
   let momentMean = toTime(timer.mean)
   let momentStd = toTime(timer.std)
   fmt"{momentMean} ± {momentStd} per loop (mean ± std. dev. of {timer.times} runs, {timer.loops} loops each)"
 
 
-proc toTime(time: float): Moment = 
+proc toTime(time: float): Moment =
   var moment = new Moment
   let nanoTime = TimeInt(time)
-  moment.nanoSeconds = float(nanoTime mod 1_000 - nanoTime) + time 
+  moment.nanoSeconds = float(nanoTime mod 1_000 - nanoTime) + time
   moment.microSeconds = (nanoTime div 1_000) mod 1_000
   moment.milliSeconds = (nanoTime div 1_000_000) mod 1_000
   moment.seconds = (nanoTime div 1_000_000_000) mod 1_000
   moment.minutes = (nanoTime div 1_000_000_000 div 60) mod 1_000
   moment
 
-proc toTime(time: int64): Moment = 
+proc toTime(time: int64): Moment =
   var moment = new Moment
   let nanoTime = TimeInt(time)
   moment.nanoSeconds = float(nanoTime mod 1_000)
@@ -80,13 +80,13 @@ proc toTime(time: int64): Moment =
   moment
 
 
-proc monit*(name="monit"): Monit = 
+proc monit*(name = "monit"): Monit =
   Monit(name: name)
 
-proc start*(self: Monit) = 
+proc start*(self: Monit) =
   self.begin = getMonoTime()
 
-proc finish*(self: Monit) = 
+proc finish*(self: Monit) =
   self.stop = getMonoTime()
   let lasting = self.stop - self.begin
   echo self.name & " -> " & $lasting.inNanoseconds.toTime
@@ -94,19 +94,19 @@ proc finish*(self: Monit) =
 
 
 # 8.26 ns ± 0.12 ns per loop (mean ± std. dev. of 7 runs, 100000000 loops each)
-#  TODO  
+#  TODO
 # Modify to get the info of proc
-template inner*(myFunc: untyped): TimeInt = 
+template inner*(myFunc: untyped): TimeInt =
   let time = getMonoTime()
-  myFunc 
+  myFunc
   let lasting = getMonoTime() - time
   lasting.inNanoseconds.TimeInt
 
 
-template timeGo*(myFunc: untyped, 
-                repeatTimes: int = repeatTimes, 
-                loopTimes: int = loopTimes): Timer = 
-  var 
+template timeGo*(myFunc: untyped,
+                repeatTimes: int = repeatTimes,
+                loopTimes: int = loopTimes): Timer =
+  var
     timer = new Timer
     timerTotal: seq[TimeInt]
     totalMean: seq[float]
@@ -123,9 +123,9 @@ template timeGo*(myFunc: untyped,
       oneTime = oneTime div 50_000
       oneTime = oneTime div 100_000
       if oneTime != 0:
-          timerTimes = 0
-          totalMean.add(singleTime)
-          totalStd.add(0.0)
+        timerTimes = 0
+        totalMean.add(singleTime)
+        totalStd.add(0.0)
       timerLoops = 1
     else:
       timerLoops = 10 ^ int(log10(timerLoops.float))
@@ -159,22 +159,26 @@ template timeOnce*(code: untyped) =
   code
   m.finish()
 
+template timeGo*(repeatTimes: int = repeatTimes, loopTimes: int = loopTimes,
+    code: untyped) =
+  echo timeGo(code, repeatTimes, loopTimes)
+
 when isMainModule:
   timeOnce:
     var a = 12
     for i in 1 .. 10000:
       a += i
     echo a
-  
-  echo timeGo do:
+
+  timeGo(1, 1):
     var b = 12
     b += 12
 
-  proc foo() = 
+  proc foo() =
     var a = 12
     for i in 1 .. 10000:
       a += i
-    echo a
+
 
 
   echo timeGo(foo())
