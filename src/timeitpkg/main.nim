@@ -159,7 +159,9 @@ template timeOnce*(code: untyped) =
   code
   m.finish()
 
-template timeGo*(repeatTimes: int = repeatTimes, loopTimes: int = loopTimes,
+
+template timeGo*(repeatTimes: int = repeatTimes, 
+    loopTimes: int = loopTimes, 
     code: untyped) =
   echo timeGo(code, repeatTimes, loopTimes)
 
