@@ -5,6 +5,8 @@ measuring execution times written in nim.
 ```text
 nimble install timeit
 ```
+## Documention
+https://xflywind.github.io/timeit/src/main.html
 
 ## Usage
 ### import timeit
@@ -38,7 +40,13 @@ echo timeGo do:
   a += 12
 # output [12ms 883μs 34.58ns] ± [19μs 974.83ns] per loop (mean ± std. dev. of 7 runs, 10 loops each)
 ```
-
+or you can specify the repeatTimes and loopTimes as follows:
+```nim
+timeGo(1, 1):
+  var b = 12
+  b += 12
+# output [200.00ns] ± [0.00ns] per loop (mean ± std. dev. of 1 runs, 1 loops each)
+```
 ### use monit function
 You can use monit function to measure the times
 of code executions. \
