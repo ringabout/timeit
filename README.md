@@ -66,7 +66,7 @@ m.finish()
 ```
 You can also monit once as follows:
 ```nim
-timeOnce:
+timeOnce("test-once"):
   var a = 12
   for i in 1 .. 10000:
     a += i

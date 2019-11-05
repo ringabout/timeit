@@ -153,8 +153,8 @@ template timeGo*(myFunc: untyped,
   timer
 
 
-template timeOnce*(code: untyped) =
-  var m = monit("test-once")
+template timeOnce*(name: string="monit-once", code: untyped) =
+  var m = monit(name)
   m.start()
   code
   m.finish()
@@ -165,12 +165,12 @@ template timeGo*(repeatTimes: int = repeatTimes,
     code: untyped) =
   echo timeGo(code, repeatTimes, loopTimes)
 
+
 when isMainModule:
-  timeOnce:
-    var a = 12
-    for i in 1 .. 10000:
-      a += i
-    echo a
+  timeOnce("Test With Name"):
+    var s = "Hello, Nim\n"
+    s &= "Let's change the world\n"
+    echo s
 
   timeGo(1, 1):
     var b = 12
@@ -180,7 +180,5 @@ when isMainModule:
     var a = 12
     for i in 1 .. 10000:
       a += i
-
-
 
   echo timeGo(foo())
