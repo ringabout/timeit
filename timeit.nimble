@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.3.4"
+version       = "0.3.6"
 author        = "flywind"
 description   = "measuring execution times written in nim."
 license       = "MIT"
