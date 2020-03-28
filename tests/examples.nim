@@ -7,15 +7,13 @@
 
 import unittest, os
 
-import timeit
+import ../src/timeit
 
 proc sleepNoReturn(num: varargs[int]) = 
   sleep(3)
 
 proc sleepDiscardValue(num: varargs[int]): int {.discardable.} = 
   sleep(3)
-
-
 
 test "proc without return value":
   echo timeGo(sleepNoReturn(5, 2, 1), 7, 2)
