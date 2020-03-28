@@ -8,8 +8,8 @@ export times
 
 
 const
-  repeatTimes = 7
-  loopTimes = 0
+  RepeatTimes = 7
+  LoopTimes = 0
 
 type
   TimeInt* = int
@@ -35,7 +35,6 @@ type
 proc `$`*(moment: Moment): string
 proc `$`*(timer: Timer): string
 proc toTime(time: float): Moment
-proc monit*(name = "monit"): Monit
 
 
 proc `$`*(moment: Moment): string =
@@ -51,13 +50,11 @@ proc `$`*(moment: Moment): string =
   result &= fmt"{moment.nanoSeconds:.2f}ns"
   result &= "]"
 
-
-
 proc `$`*(timer: Timer): string =
-  let momentMean = toTime(timer.mean)
-  let momentStd = toTime(timer.std)
+  let
+    momentMean = toTime(timer.mean)
+    momentStd = toTime(timer.std)
   fmt"{momentMean} ± {momentStd} per loop (mean ± std. dev. of {timer.times} runs, {timer.loops} loops each)"
-
 
 proc toTime(time: float): Moment =
   var moment = new Moment
@@ -79,7 +76,6 @@ proc toTime(time: int64): Moment =
   moment.minutes = (nanoTime div 1_000_000_000 div 60) mod 1_000
   moment
 
-
 proc monit*(name = "monit"): Monit =
   Monit(name: name)
 
@@ -91,21 +87,16 @@ proc finish*(self: Monit) =
   let lasting = self.stop - self.begin
   echo self.name & " -> " & $lasting.inNanoseconds.toTime
 
-
-
 # 8.26 ns ± 0.12 ns per loop (mean ± std. dev. of 7 runs, 100000000 loops each)
-#  TODO
-# Modify to get the info of proc
 template inner*(myFunc: untyped): TimeInt =
   let time = getMonoTime()
   myFunc
   let lasting = getMonoTime() - time
   lasting.inNanoseconds.TimeInt
 
-
 template timeGo*(myFunc: untyped,
-                repeatTimes: int = repeatTimes,
-                loopTimes: int = loopTimes): Timer =
+                repeatTimes = RepeatTimes,
+                loopTimes = LoopTimes): Timer =
   var
     timer = new Timer
     timerTotal: seq[TimeInt]
@@ -143,7 +134,6 @@ template timeGo*(myFunc: untyped,
     totalStd.add timerTotal.standardDeviation
     GC_full_collect()
 
-
   timer.mean = totalMean.mean
   timer.std = totalStd.standardDeviation
   if timerTimes == 0:
@@ -152,16 +142,14 @@ template timeGo*(myFunc: untyped,
   timer.loops = timerLoops
   timer
 
-
-template timeOnce*(name: string="monit-once", code: untyped) =
+template timeOnce*(name: string = "monit-once", code: untyped) =
   var m = monit(name)
   m.start()
   code
   m.finish()
 
-
-template timeGo*(repeatTimes: int = repeatTimes, 
-    loopTimes: int = loopTimes, 
+template timeGo*(repeatTimes = RepeatTimes,
+    loopTimes = LoopTimes,
     code: untyped) =
   echo timeGo(code, repeatTimes, loopTimes)
 
