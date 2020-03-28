@@ -14,3 +14,6 @@ bin           = @["timeit"]
 # Dependencies
 
 requires "nim >= 1.0.0"
+
+task tests, "Run tests":
+  exec "nim c -r tests/examples.nim"

@@ -148,8 +148,8 @@ template timeOnce*(name: string = "monit-once", code: untyped) =
   code
   m.finish()
 
-template timeGo*(repeatTimes = RepeatTimes,
-    loopTimes = LoopTimes,
+template timeGo*(repeatTimes: Natural,
+    loopTimes: Natural,
     code: untyped) =
   echo timeGo(code, repeatTimes, loopTimes)
 
