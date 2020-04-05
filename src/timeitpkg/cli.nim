@@ -3,9 +3,8 @@ import parseopt
 import os, osproc
 
 
-
-proc command*() = 
-  var 
+proc command*() =
+  var
     p = initOptParser()
     name: string
     def: string
@@ -63,8 +62,9 @@ proc command*() =
       temp.close()
     strm.close()
 
-    
-  let (output, _) = execCmdEx(fmt"nim c -r -f --d:{option} --verbosity=0 --hints=off --hint[source]=on " & tempFile)
+
+  let (output, _) = execCmdEx(
+          fmt"nim c -r -f --d:{option} --verbosity=0 --hints=off --hint[source]=on " & tempFile)
 
   temp.close()
 

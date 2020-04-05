@@ -8,8 +8,9 @@ export times
 
 
 const
-  RepeatTimes = 7
-  LoopTimes = 0
+  RepeatTimes* = 7
+  LoopTimes* = 0
+
 
 type
   TimeInt* = int
@@ -29,7 +30,6 @@ type
     name*: string
     begin*: MonoTime
     stop*: MonoTime
-
 
 
 proc `$`*(moment: Moment): string
@@ -87,7 +87,8 @@ proc finish*(self: Monit) =
   let lasting = self.stop - self.begin
   echo self.name & " -> " & $lasting.inNanoseconds.toTime
 
-# 8.26 ns ± 0.12 ns per loop (mean ± std. dev. of 7 runs, 100000000 loops each)
+# 8.26 ns ± 0.12 ns per loop 
+# (mean ± std. dev. of 7 runs, 100000000 loops each)
 template inner*(myFunc: untyped): TimeInt =
   let time = getMonoTime()
   myFunc
@@ -142,7 +143,7 @@ template timeGo*(myFunc: untyped,
   timer.loops = timerLoops
   timer
 
-template timeOnce*(name: string = "monit-once", code: untyped) =
+template timeOnce*(name = "monit-once", code: untyped) =
   var m = monit(name)
   m.start()
   code
