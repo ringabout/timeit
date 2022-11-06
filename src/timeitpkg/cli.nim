@@ -38,7 +38,7 @@ proc command*() =
     option = "debug"
 
   if name.endsWith(".nim"):
-    name = name[ .. ^5]
+    name = name[ 0 .. ^5]
   var strm = newFileStream(name & ".nim", fmRead)
   var line = ""
   let tempFile = getTempDir() & "timeit_temp.nim"
